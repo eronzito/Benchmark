@@ -51,8 +51,9 @@ if (reactionBtn) {
             }, waitTime);
         } else {
             const reactionEnd = performance.now();
-            const reactionTime = Math.round(reactionEnd - reactionStart);
-			reactionResult.textContent = `Seu tempo de reação: ${reactionTime} ms`;
+            let reactionTime = Math.round(reactionEnd - reactionStart);
+            reactionTime = Math.max(0, reactionTime - 100);
+            reactionResult.textContent = `Seu tempo de reação: ${reactionTime} ms`;
             reactionBtn.classList.remove('ready');
             reactionBtn.textContent = 'Iniciar';
         }
