@@ -5,29 +5,35 @@ const slider = document.getElementById('volume-slider');
 const musicContainer = document.querySelector('.header-music-container');
 
 function toggleMusic() {
-	if (isPlaying) {
-		audio.pause();
-		btn.innerHTML = '&#x1F507;';
-	} else {
-		audio.play();
-		btn.innerHTML = '&#x1F50A;';
-	}
-	isPlaying = !isPlaying;
+    if (!btn) return;
+    if (isPlaying) {
+        audio.pause();
+        btn.innerHTML = '<img src="sem_som.png" alt="Sem som" class="header-icon">';
+    } else {
+        audio.play();
+        btn.innerHTML = '<img src="som.png" alt="Som" class="header-icon">';
+    }
+    isPlaying = !isPlaying;
+}
+
+// mostra ícone inicial (mutado) caso o botão exista
+if (btn) {
+    btn.innerHTML = '<img src="sem_som.png" alt="Sem som" class="header-icon">';
 }
 
 if (slider) {
-	slider.addEventListener('input', function() {
-		audio.volume = parseFloat(slider.value);
-	});
+    slider.addEventListener('input', function() {
+        audio.volume = parseFloat(slider.value);
+    });
 }
 
 if (musicContainer) {
-	musicContainer.addEventListener('mouseenter', function() {
-		slider.style.display = 'inline-block';
-	});
-	musicContainer.addEventListener('mouseleave', function() {
-		slider.style.display = 'none';
-	});
+    musicContainer.addEventListener('mouseenter', function() {
+        slider.style.display = 'inline-block';
+    });
+    musicContainer.addEventListener('mouseleave', function() {
+        slider.style.display = 'none';
+    });
 }
 
 let reactionTimeout;

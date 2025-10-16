@@ -149,6 +149,14 @@
             border: 2px solid #fff;
         }
 
+        .header-home-btn img,
+.header-music-btn img,
+.header-icon {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
         .reaction-main {
     display: flex;
     flex-direction: column;
@@ -194,4 +202,20 @@
     margin-top: 16px;
     min-height: 40px;
     text-align: center;
+}
+
+.header-home-btn,
+.header-music-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;               
+    border: 2px solid #000;     
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.header-home-btn:hover,
+.header-music-btn:hover {
+    background: rgba(0,0,0,0.06);
 }
