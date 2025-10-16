@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
@@ -12,8 +12,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Center vertically */
-            align-items: center;     /* Center horizontally */
+            justify-content: center;
+            align-items: center;   
         }
         h1 {
             margin-bottom: 110px;
@@ -22,14 +22,42 @@
     </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="header-home-btn">
+            <img src="seta_menu.png" alt="Voltar" class="header-icon">
+        </a>
+        <span class="header-title">Benchmark</span>
+    </header>
     <h1>Titulo a ser decidido</h1>
     <div class="button-area">
         <div class="button-grid">
-            <a class="nav-button" href="pag1.html">Pagina 1</a>
-            <a class="nav-button" href="pag2.html">Pagina 2</a>
-            <a class="nav-button" href="pag3.html">Pagina 3</a>
-            <a class="nav-button" href="pag4.html">Pagina 4</a>
+            <a class="nav-button" href="TesteReacao.html">
+                <img src="alvo.png" alt="Ícone Teste de reação" class="nav-img">
+                Teste de reação
+            </a>
+            <a class="nav-button" href="TesteEscrita.html">
+                <img src="keycap.png" alt="Ícone Teste de escrita" class="nav-img">
+                Teste de escrita
+            </a>
+            <a class="nav-button" href="TesteMemoria.html">
+                <img src="memoria.png" alt="Ícone Teste de memória" class="nav-img">
+                Teste de memória
+            </a>
+            <a class="nav-button" href="TesteClicks.html">
+                <img src="cursor.png" alt="Ícone Teste de clicks" class="nav-img">
+                Teste de clicks
+            </a>
         </div>
     </div>
+    <footer style="width:100%; background:#4722ad; color:#fff; text-align:center; padding:24px 0; position:relative; bottom:0; font-size:22px;">
+        <a href="exemplo.html" target="_blank" style="color:#fff; text-decoration:underline; font-weight:bold;">Saiba mais</a>
+    </footer>
+
+    <button id="music-btn" class="header-music-btn" onclick="toggleMusic()">
+        <img src="sem_som.png" alt="Sem som" class="header-icon">
+    </button>
+
+    <audio id="site-music" src="background.mp3" loop></audio>
+    <script src="script.js"></script>
 </body>
 </html>
