@@ -4,6 +4,7 @@ const btn = document.getElementById('music-btn');
 const slider = document.getElementById('volume-slider');
 const musicContainer = document.querySelector('.header-music-container');
 
+// Controle de Música de Fundo
 function toggleMusic() {
     if (!btn) return;
     if (isPlaying) {
@@ -35,6 +36,7 @@ if (musicContainer) {
     });
 }
 
+// Teste de Reação
 let reactionTimeout;
 let reactionStart;
 const reactionBtn = document.getElementById('reaction-btn');
@@ -65,6 +67,7 @@ if (reactionBtn) {
     });
 }
 
+// Teste de Cliques
 (function () {
     const startBtn = document.getElementById('click-start');
     const clickTarget = document.getElementById('click-target');
@@ -144,5 +147,137 @@ if (reactionBtn) {
                 }, 10000);
             }
         }, 1000);
+    });
+})();
+
+// Teste de Memória (mostra sequência concatenada, ex: "54")
+(function () {
+    const startBtn = document.getElementById('memory-start');
+    const displayEl = document.getElementById('memory-display');
+    const levelEl = document.getElementById('memory-level');
+    const inputArea = document.getElementById('memory-input-area');
+    const inputEl = document.getElementById('memory-input');
+    const submitBtn = document.getElementById('memory-submit');
+    const resultEl = document.getElementById('memory-result');
+
+    if (!startBtn || !displayEl) return;
+
+    let level = 0;
+    let sequence = [];
+    let showTimeouts = [];
+    const SHOW_TIME = 5000;
+    const BETWEEN_TIME = 500;
+
+    function randDigit() {
+        return Math.floor(Math.random() * 10);
+    }
+
+    function clearShowTimeouts() {
+        showTimeouts.forEach(t => clearTimeout(t));
+        showTimeouts = [];
+    }
+
+    function updateLevelDisplay() {
+        levelEl.textContent = level;
+    }
+
+    function showText(text) {
+        displayEl.textContent = String(text);
+    }
+
+    function hideDisplay() {
+        displayEl.textContent = '';
+    }
+
+    // mostra a sequência inteira concatenada por SHOW_TIME ms (ex: [5,4] -> "54")
+    function playConcatenatedSequenceAndPrompt() {
+        inputArea.style.display = 'none';
+        inputEl.value = '';
+        resultEl.textContent = '';
+        displayEl.textContent = '';
+
+        const text = sequence.join('');
+        showText(text);
+
+        // esconder depois de SHOW_TIME
+        showTimeouts.push(setTimeout(() => {
+            hideDisplay();
+        }, SHOW_TIME));
+
+        // depois do pequeno intervalo, mostrar input
+        showTimeouts.push(setTimeout(() => {
+            inputArea.style.display = 'flex';
+            inputEl.focus();
+            resultEl.textContent = 'Digite a sequência que você viu (ex: 54 ou 5 4).';
+        }, SHOW_TIME + BETWEEN_TIME));
+    }
+
+    function startRound() {
+        level += 1;
+        sequence = [];
+        for (let i = 0; i < level; i++) sequence.push(randDigit());
+        updateLevelDisplay();
+        startBtn.disabled = true;
+        clearShowTimeouts();
+        playConcatenatedSequenceAndPrompt();
+    }
+
+    function endGame() {
+        const remembered = Math.max(0, level - 1);
+        resultEl.textContent = `Fim de jogo — você lembrou ${remembered} número(s).`;
+        startBtn.textContent = 'Recomeçar';
+        startBtn.disabled = false;
+        inputArea.style.display = 'none';
+        displayEl.textContent = '';
+        level = 0;
+        sequence = [];
+        updateLevelDisplay();
+        clearShowTimeouts();
+    }
+
+    function normalizeInputToDigits(raw) {
+        // aceita "54" ou "5 4" ou "5,4" -> retorna [5,4]
+        const cleaned = raw.replace(/\D+/g, '');
+        return cleaned.split('').map(c => parseInt(c, 10));
+    }
+
+    submitBtn.addEventListener('click', () => {
+        const raw = (inputEl.value || '').trim();
+        if (!raw) return;
+        const attempt = normalizeInputToDigits(raw);
+        if (attempt.length !== sequence.length) {
+            resultEl.textContent = 'Sequência com tamanho incorreto. Jogo encerrado.';
+            endGame();
+            return;
+        }
+        let ok = true;
+        for (let i = 0; i < sequence.length; i++) {
+            if (Number.isNaN(attempt[i]) || attempt[i] !== sequence[i]) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            resultEl.textContent = 'Correto! Preparando próximo nível...';
+            inputArea.style.display = 'none';
+            setTimeout(() => {
+                startRound();
+            }, 1200);
+        } else {
+            endGame();
+        }
+    });
+
+    inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitBtn.click();
+    });
+
+    startBtn.addEventListener('click', () => {
+        clearShowTimeouts();
+        level = 0;
+        sequence = [];
+        resultEl.textContent = '';
+        startBtn.textContent = 'Iniciar';
+        startRound();
     });
 })();
