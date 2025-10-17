@@ -325,3 +325,178 @@ if (reactionBtn) {
         startRound();
     });
 })();
+
+// Teste de Escrita:
+(function () {
+    const startBtn = document.getElementById('typing-start');
+    const countdownEl = document.getElementById('typing-countdown');
+    const timerEl = document.getElementById('typing-timer');
+    const inputEl = document.getElementById('typing-input');
+    const lineEls = [
+        document.getElementById('line1'),
+        document.getElementById('line2'),
+        document.getElementById('line3')
+    ];
+    const resultEl = document.getElementById('typing-result');
+    const wordLinesContainer = document.getElementById('word-lines');
+
+    if (!startBtn || !inputEl || !lineEls[0]) return;
+
+
+    const DICT = [
+        "amor","casa","tempo","pessoa","ano","dia","mundo","vida","coisa","homem", 
+        "mulher","mão","olho","cidade","lado","poder","trabalho","mão","palavra", 
+        "parte","porta","rua","água","fogo","terra","ar","sonho","noite","manhã", 
+        "carro","janela","amigo","falar","andar","saber","ver","vir","ficar","gente", 
+        "história","música","livro","escola","mesa","cadeira","janela","computador", 
+        "celular","janela","janela","janela","verde","azul","branco","preto","cinza", 
+        "rápido","lento","forte","fraco","alegre","triste","bom","ruim","claro","escuro", 
+        "cidade","campo","mar","ilha","flor","árvore","rio","montanha","praia","vento", 
+        "criança","pai","mãe","irmão","irmã","tio","avó","bebê","nome","idade", "luz","sol",
+        "chuva","neve","nuvem","estrela","céu","calor","frio","sombra", "comer","beber","dormir",
+        "correr","pular","cair","ler","escrever","ouvir","sentir", "dizer","dar","levar","trazer",
+        "pôr","tirar","abrir","fechar","pensar","achar", "caminho","ponto","fundo","meio","fim",
+        "início","volta","fora","dentro","perto", "longe","sim","não","agora","nunca","sempre",
+        "logo","devagar","paz","guerra", "risco","medo","sorte","chave","conta","doce","sal",
+        "pão","leite","café", "chá","suco","vinho","copo","prato","faca","garfo","colher","bola",
+        "jogo", "cão","gato","pássaro","peixe","bicho","cabeça","corpo","pé","braço","perna", "roupa",
+        "sapato","anel","bolsa","cinto","laço","novo","velho","jovem","certo", "errado","doente",
+        "saudável","limpo","sujo","quente","gelado","seco","molhado","vazio", "cheio","puro","simples",
+        "total","grande","pequeno","alto","baixo","fino","grosso", "doer","pesar","tocar","gritar",
+        "rir","chorar","ajudar","pedir","usar","trocar", "papel","tinta","lápis","borracha","tesoura",
+        "cola","caixa","tubo","fita","disco", "roda","motor","freio","buzina","ponte","poste","telha",
+        "parede","teto","chão", "cerca","poço","pedra","metal","vidro","plástico","seda","lã","linha",
+        "agulha","nós","vós","eles","elas","este","esse","aqui","ali","quem","qual", "onde","como",
+        "quanto","meu","teu","dele","sua","nosso","dela","vosso", "bom","mau"
+    ];
+
+    let buffer = [];        
+    let index = 0;          
+    let typedTotal = 0;
+    let typedCorrect = 0;
+    let testTimer = null;
+    let countdownTimer = null;
+    const TEST_DURATION = 30; 
+    const COOLDOWN = 3;       
+
+    function randWord() {
+        return DICT[Math.floor(Math.random() * DICT.length)];
+    }
+
+    function ensureBuffer(minSize = 60) {
+        while (buffer.length - index < minSize) {
+            for (let i = 0; i < 40; i++) buffer.push(randWord());
+        }
+    }
+
+    function renderLines() {
+        ensureBuffer(60);
+        const windowSize = 60; 
+        const slice = buffer.slice(index, index + windowSize);
+        const perLine = Math.ceil(slice.length / 3);
+        for (let i = 0; i < 3; i++) {
+            const lineWords = slice.slice(i * perLine, (i + 1) * perLine);
+            const html = lineWords.map((w, idx) => {
+                const globalIdx = index + i * perLine + idx;
+                if (globalIdx === index) {
+                    return `<strong style="text-decoration:underline">${w}</strong>`;
+                }
+                return w;
+            }).join(' ');
+            lineEls[i].innerHTML = html;
+        }
+    }
+
+    function startCooldown() {
+        let remaining = COOLDOWN;
+        countdownEl.textContent = remaining;
+        inputEl.disabled = true;
+        inputEl.value = '';
+        resultEl.textContent = '';
+        typedTotal = 0;
+        typedCorrect = 0;
+        index = 0;
+        buffer = [];
+        ensureBuffer(120);
+        renderLines();
+
+        countdownTimer = setInterval(() => {
+            remaining -= 1;
+            if (remaining > 0) {
+                countdownEl.textContent = remaining;
+            } else {
+                clearInterval(countdownTimer);
+                countdownEl.textContent = '';
+                startTest();
+            }
+        }, 1000);
+    }
+
+    function startTest() {
+        let timeLeft = TEST_DURATION;
+        inputEl.disabled = false;
+        inputEl.focus();
+        timerEl.textContent = `Tempo: ${timeLeft}s`;
+        renderLines();
+
+        testTimer = setInterval(() => {
+            timeLeft -= 1;
+            timerEl.textContent = `Tempo: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(testTimer);
+                endTest();
+            }
+        }, 1000);
+    }
+
+    function endTest() {
+        inputEl.disabled = true;
+        timerEl.textContent = '';
+        countdownEl.textContent = '';
+        const ppm = (typedCorrect / TEST_DURATION) * 60;
+        const ppmDisplay = ppm.toFixed(1).replace('.', ',');
+        const accuracy = typedTotal === 0 ? 0 : (typedCorrect / typedTotal) * 100;
+        const accDisplay = accuracy.toFixed(1).replace('.', ',');
+        resultEl.innerHTML = `Resultado: <strong>${ppmDisplay} PPM</strong> — Precisão: <strong>${accDisplay}%</strong>`;
+        startBtn.disabled = false;
+        startBtn.textContent = 'Reiniciar';
+    }
+
+    function acceptTypedWord(raw) {
+        const typed = raw.trim();
+        if (typed === '') return;
+        const target = buffer[index];
+        typedTotal += 1;
+        if (typed.toLowerCase() === target.toLowerCase()) {
+            typedCorrect += 1;
+        }
+        index += 1;
+        renderLines();
+    }
+
+    inputEl.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            const val = inputEl.value;
+            acceptTypedWord(val);
+            inputEl.value = '';
+        }
+    });
+
+    inputEl.addEventListener('blur', () => {
+        if (inputEl.value.trim()) {
+            acceptTypedWord(inputEl.value);
+            inputEl.value = '';
+        }
+    });
+
+    startBtn.addEventListener('click', () => {
+        if (startBtn.disabled) return;
+        startBtn.disabled = true;
+        startBtn.textContent = 'Preparando...';
+        startCooldown();
+    });
+
+    ensureBuffer(120);
+    renderLines();
+})();

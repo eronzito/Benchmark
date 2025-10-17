@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Escrita</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="header-home-btn">
+            <img src="seta_menu.png" alt="Voltar" class="header-icon">
+        </a>
+        <span class="header-title">Benchmark</span>
+        <button id="music-btn" class="header-music-btn" onclick="toggleMusic()">
+            <img src="sem_som.png" alt="Sem som" class="header-icon">
+        </button>
+    </header>
+
+    <main class="writing-main">
+        <h1>Teste de Escrita</h1>
+
+        <div class="writing-container">
+            <div class="typing-controls">
+                <button id="typing-start" class="typing-start-btn">Iniciar</button>
+                <div id="typing-countdown" class="typing-countdown" aria-live="polite"></div>
+                <div id="typing-timer" class="typing-timer"></div>
+            </div>
+
+            <div class="word-lines" id="word-lines" aria-live="polite">
+                <div class="word-line" id="line1"></div>
+                <div class="word-line" id="line2"></div>
+                <div class="word-line" id="line3"></div>
+            </div>
+
+            <input id="typing-input" class="typing-input" type="text" placeholder="Digite a palavra e pressione espaço" autocomplete="off" disabled>
+            <div id="typing-result" class="typing-result"></div>
+        </div>
+    </main>
+
+    <footer>
+        <a href="exemplo.html" target="_blank">Saiba mais</a>
+    </footer>
+
+    <audio id="site-music" src="background.mp3" loop></audio>
+    <script src="script.js"></script>
+</body>
+</html>
