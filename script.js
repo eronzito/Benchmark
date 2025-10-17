@@ -39,31 +39,76 @@ if (musicContainer) {
 // Teste de Reação
 let reactionTimeout;
 let reactionStart;
+let waitingForSignal = false;
+let earlyClickFlag = false;
 const reactionBtn = document.getElementById('reaction-btn');
 const reactionResult = document.getElementById('reaction-result');
 
+function startReactionWait() {
+    if (!reactionBtn) return;
+    waitingForSignal = true;
+    earlyClickFlag = false;
+    reactionBtn.classList.remove('ready');
+    reactionBtn.disabled = false;
+    reactionBtn.textContent = 'Espere...';
+    reactionResult.textContent = '';
+
+    const waitTime = Math.random() * 5000 + 3000; // 3s a 8s
+    reactionTimeout = setTimeout(() => {
+        reactionTimeout = null;
+        waitingForSignal = false;
+        earlyClickFlag = false;
+        reactionBtn.classList.add('ready');
+        reactionBtn.disabled = false;
+        reactionBtn.textContent = 'Clique!';
+        reactionStart = performance.now();
+    }, waitTime);
+}
+
 if (reactionBtn) {
+    reactionBtn.textContent = 'Iniciar';
+    reactionBtn.disabled = false;
+
     reactionBtn.addEventListener('click', function () {
-        if (!reactionBtn.classList.contains('ready')) {
-            if (reactionBtn.disabled) return;
-            reactionBtn.disabled = true;
-            reactionBtn.textContent = 'Espere...';
-            reactionResult.textContent = '';
-            const waitTime = Math.random() * 5000 + 3000;
-            reactionTimeout = setTimeout(() => {
-                reactionBtn.classList.add('ready');
-                reactionBtn.disabled = false;
-                reactionBtn.textContent = 'Clique!';
-                reactionStart = performance.now();
-            }, waitTime);
-        } else {
+        if (reactionBtn.classList.contains('ready')) {
             const reactionEnd = performance.now();
             let reactionTime = Math.round(reactionEnd - reactionStart);
             reactionTime = Math.max(0, reactionTime - 100);
             reactionResult.textContent = `Seu tempo de reação: ${reactionTime} ms`;
             reactionBtn.classList.remove('ready');
             reactionBtn.textContent = 'Iniciar';
+            if (reactionTimeout) { clearTimeout(reactionTimeout); reactionTimeout = null; }
+            waitingForSignal = false;
+            earlyClickFlag = false;
+            reactionBtn.disabled = false;
+            return;
         }
+
+        if (waitingForSignal) {
+            if (!earlyClickFlag) {
+                earlyClickFlag = true;
+                reactionResult.textContent = 'Muito cedo!';
+                reactionBtn.textContent = 'Muito cedo!';
+                return;
+            }
+
+            if (earlyClickFlag) {
+                if (reactionTimeout) {
+                    clearTimeout(reactionTimeout);
+                    reactionTimeout = null;
+                }
+                waitingForSignal = false;
+                earlyClickFlag = false;
+                reactionResult.textContent = 'Reiniciando o teste...';
+                reactionBtn.textContent = 'Iniciar';
+                reactionBtn.classList.remove('ready');
+                reactionBtn.disabled = false;
+                setTimeout(() => startReactionWait(), 300);
+                return;
+            }
+        }
+
+        startReactionWait();
     });
 }
 
@@ -150,7 +195,7 @@ if (reactionBtn) {
     });
 })();
 
-// Teste de Memória (mostra sequência concatenada, ex: "54")
+// Teste de Memória
 (function () {
     const startBtn = document.getElementById('memory-start');
     const displayEl = document.getElementById('memory-display');
@@ -189,7 +234,7 @@ if (reactionBtn) {
         displayEl.textContent = '';
     }
 
-    // mostra a sequência inteira concatenada por SHOW_TIME ms (ex: [5,4] -> "54")
+    
     function playConcatenatedSequenceAndPrompt() {
         inputArea.style.display = 'none';
         inputEl.value = '';
@@ -199,12 +244,12 @@ if (reactionBtn) {
         const text = sequence.join('');
         showText(text);
 
-        // esconder depois de SHOW_TIME
+        
         showTimeouts.push(setTimeout(() => {
             hideDisplay();
         }, SHOW_TIME));
 
-        // depois do pequeno intervalo, mostrar input
+        
         showTimeouts.push(setTimeout(() => {
             inputArea.style.display = 'flex';
             inputEl.focus();
@@ -236,7 +281,6 @@ if (reactionBtn) {
     }
 
     function normalizeInputToDigits(raw) {
-        // aceita "54" ou "5 4" ou "5,4" -> retorna [5,4]
         const cleaned = raw.replace(/\D+/g, '');
         return cleaned.split('').map(c => parseInt(c, 10));
     }
