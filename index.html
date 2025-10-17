@@ -6,7 +6,6 @@
     <title>Benchmark Alpha Teste</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             background: #3f3e3e;
             min-height: 100vh;
@@ -26,8 +25,14 @@
         <a href="index.html" class="header-home-btn">
             <img src="seta_menu.png" alt="Voltar" class="header-icon">
         </a>
+
         <span class="header-title">Benchmark</span>
+
+        <button id="music-btn" class="header-music-btn" onclick="toggleMusic()">
+            <img src="sem_som.png" alt="Sem som" class="header-icon">
+        </button>
     </header>
+
     <h1>Titulo a ser decidido</h1>
     <div class="button-area">
         <div class="button-grid">
@@ -52,10 +57,6 @@
     <footer style="width:100%; background:#4722ad; color:#fff; text-align:center; padding:24px 0; position:relative; bottom:0; font-size:22px;">
         <a href="exemplo.html" target="_blank" style="color:#fff; text-decoration:underline; font-weight:bold;">Saiba mais</a>
     </footer>
-
-    <button id="music-btn" class="header-music-btn" onclick="toggleMusic()">
-        <img src="sem_som.png" alt="Sem som" class="header-icon">
-    </button>
 
     <audio id="site-music" src="background.mp3" loop></audio>
     <script src="script.js"></script>

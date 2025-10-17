@@ -16,7 +16,6 @@ function toggleMusic() {
     isPlaying = !isPlaying;
 }
 
-// mostra ícone inicial (mutado) caso o botão exista
 if (btn) {
     btn.innerHTML = '<img src="sem_som.png" alt="Sem som" class="header-icon">';
 }
@@ -65,3 +64,85 @@ if (reactionBtn) {
         }
     });
 }
+
+(function () {
+    const startBtn = document.getElementById('click-start');
+    const clickTarget = document.getElementById('click-target');
+    const countdownEl = document.getElementById('countdown');
+    const timeRemainingEl = document.getElementById('time-remaining');
+    const resultEl = document.getElementById('click-result');
+
+    if (!startBtn || !clickTarget) return;
+
+    let clickCount = 0;
+    let countdownInterval = null;
+    let testTimeout = null;
+    let timeInterval = null;
+    let testRunning = false;
+
+    function resetDisplay() {
+        countdownEl.textContent = '';
+        timeRemainingEl.textContent = '';
+        resultEl.textContent = '';
+        clickCount = 0;
+    }
+
+    function finishTest() {
+        testRunning = false;
+        clickTarget.disabled = true;
+        clickTarget.removeEventListener('click', onClickTarget);
+        clearInterval(timeInterval);
+        timeRemainingEl.textContent = '';
+
+        const cpsValue = clickCount / 10;            
+        const cpsDisplay = cpsValue.toFixed(1);      
+        const cpsLabel = cpsDisplay.replace('.', ',');
+        resultEl.textContent = `${cpsLabel}Cps (${cpsDisplay} clicks por segundo)`;
+        startBtn.disabled = false;
+        startBtn.textContent = 'Reiniciar';
+    }
+
+    function onClickTarget() {
+        if (!testRunning) return;
+        clickCount += 1;
+    }
+
+    startBtn.addEventListener('click', function () {
+        if (startBtn.disabled) return;
+        startBtn.disabled = true;
+        startBtn.textContent = 'Preparando...';
+        resetDisplay();
+
+        let remaining = 3;
+        countdownEl.textContent = remaining;
+        countdownInterval = setInterval(() => {
+            remaining -= 1;
+            if (remaining > 0) {
+                countdownEl.textContent = remaining;
+            } else {
+                clearInterval(countdownInterval);
+                countdownEl.textContent = '';
+                testRunning = true;
+                clickCount = 0;
+                clickTarget.disabled = false;
+                clickTarget.focus();
+                startBtn.textContent = 'Em execução...';
+
+                clickTarget.addEventListener('click', onClickTarget);
+
+                let timeLeft = 10;
+                timeRemainingEl.textContent = `Tempo restante: ${timeLeft}s`;
+                timeInterval = setInterval(() => {
+                    timeLeft -= 1;
+                    if (timeLeft >= 0) {
+                        timeRemainingEl.textContent = `Tempo restante: ${timeLeft}s`;
+                    }
+                }, 1000);
+
+                testTimeout = setTimeout(() => {
+                    finishTest();
+                }, 10000);
+            }
+        }, 1000);
+    });
+})();

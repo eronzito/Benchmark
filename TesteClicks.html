@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Teste de Reação</title>
+    <title>Teste de Clicks</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,7 +10,6 @@
         <a href="index.html" class="header-home-btn">
             <img src="seta_menu.png" alt="Voltar" class="header-icon">
         </a>
-
         <span class="header-title">Benchmark</span>
 
         <button id="music-btn" class="header-music-btn" onclick="toggleMusic()">
@@ -18,13 +17,22 @@
         </button>
     </header>
 
-    <main class="reaction-main">
-        <h1>Teste de Reação</h1>
-        <div class="reaction-container">
-            <button id="reaction-btn" class="reaction-btn">Iniciar</button>
-            <div id="reaction-result" class="reaction-result"></div>
+    <main class="clicks-main">
+        <h1>Teste de Clicks</h1>
+
+        <div class="clicks-container">
+            <div class="click-controls">
+                <button id="click-start" class="click-start-btn">Iniciar teste</button>
+                <div id="countdown" class="countdown" aria-live="polite"></div>
+                <div id="time-remaining" class="time-remaining"></div>
+            </div>
+
+            <button id="click-target" class="clicks-btn" disabled>Clique aqui</button>
+
+            <div id="click-result" class="click-result"></div>
         </div>
     </main>
+
     <footer>
         <a href="exemplo.html" target="_blank">Saiba mais</a>
     </footer>
