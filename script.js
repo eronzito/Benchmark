@@ -4,7 +4,7 @@ const btn = document.getElementById('music-btn');
 const slider = document.getElementById('volume-slider');
 const musicContainer = document.querySelector('.header-music-container');
 
-// Controle de Música de Fundo
+// Controle de Música
 function toggleMusic() {
     if (!btn) return;
     if (isPlaying) {
@@ -132,6 +132,7 @@ if (reactionBtn) {
         countdownEl.textContent = '';
         timeRemainingEl.textContent = '';
         resultEl.textContent = '';
+        resultEl.style.display = 'none';
         clickCount = 0;
     }
 
@@ -142,10 +143,10 @@ if (reactionBtn) {
         clearInterval(timeInterval);
         timeRemainingEl.textContent = '';
 
-        const cpsValue = clickCount / 10;            
-        const cpsDisplay = cpsValue.toFixed(1);      
-        const cpsLabel = cpsDisplay.replace('.', ',');
-        resultEl.textContent = `${cpsLabel}Cps (${cpsDisplay} clicks por segundo)`;
+        const cpsValue = clickCount / 10;
+        const cpsDisplay = cpsValue.toFixed(1).replace('.', ',');
+        resultEl.textContent = `${cpsDisplay}Cps (${cpsValue.toFixed(1)} clicks por segundo)`;
+        resultEl.style.display = 'block'; 
         startBtn.disabled = false;
         startBtn.textContent = 'Reiniciar';
     }
@@ -234,22 +235,23 @@ if (reactionBtn) {
         displayEl.textContent = '';
     }
 
-    
+
     function playConcatenatedSequenceAndPrompt() {
         inputArea.style.display = 'none';
         inputEl.value = '';
         resultEl.textContent = '';
+        resultEl.style.display = 'none'; 
         displayEl.textContent = '';
 
         const text = sequence.join('');
         showText(text);
 
-        
+
         showTimeouts.push(setTimeout(() => {
             hideDisplay();
         }, SHOW_TIME));
 
-        
+
         showTimeouts.push(setTimeout(() => {
             inputArea.style.display = 'flex';
             inputEl.focus();
@@ -270,6 +272,7 @@ if (reactionBtn) {
     function endGame() {
         const remembered = Math.max(0, level - 1);
         resultEl.textContent = `Fim de jogo — você lembrou ${remembered} número(s).`;
+        resultEl.style.display = 'block';
         startBtn.textContent = 'Recomeçar';
         startBtn.disabled = false;
         inputArea.style.display = 'none';
@@ -413,6 +416,7 @@ if (reactionBtn) {
         inputEl.disabled = true;
         inputEl.value = '';
         resultEl.textContent = '';
+        resultEl.style.display = 'none';
         typedTotal = 0;
         typedCorrect = 0;
         index = 0;
@@ -458,6 +462,7 @@ if (reactionBtn) {
         const accuracy = typedTotal === 0 ? 0 : (typedCorrect / typedTotal) * 100;
         const accDisplay = accuracy.toFixed(1).replace('.', ',');
         resultEl.innerHTML = `Resultado: <strong>${ppmDisplay} PPM</strong> — Precisão: <strong>${accDisplay}%</strong>`;
+        resultEl.style.display = 'block';
         startBtn.disabled = false;
         startBtn.textContent = 'Reiniciar';
     }
@@ -499,4 +504,47 @@ if (reactionBtn) {
 
     ensureBuffer(120);
     renderLines();
+})();
+
+(function () {
+    const rootEl = document.documentElement;
+
+
+    function ensureThemeButton() {
+        if (document.getElementById('theme-btn')) return document.getElementById('theme-btn');
+
+        const header = document.querySelector('header');
+        if (!header) return null;
+
+        const btn = document.createElement('button');
+        btn.id = 'theme-btn';
+        btn.className = 'header-theme-btn';
+        btn.setAttribute('aria-label', 'Alternar tema');
+        btn.type = 'button';
+        btn.textContent = '🌙';
+        const musicBtn = document.getElementById('music-btn');
+        if (musicBtn && musicBtn.parentNode === header) header.insertBefore(btn, musicBtn);
+        else header.appendChild(btn);
+
+        return btn;
+    }
+
+    const themeBtn = ensureThemeButton();
+
+    const saved = localStorage.getItem('site-theme'); 
+    if (saved === 'light') rootEl.classList.add('light-theme');
+
+    function updateThemeIcon(btn) {
+        const isLight = rootEl.classList.contains('light-theme');
+        if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+    }
+    updateThemeIcon(themeBtn);
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            const isLight = rootEl.classList.toggle('light-theme');
+            localStorage.setItem('site-theme', isLight ? 'light' : 'dark');
+            updateThemeIcon(themeBtn);
+        });
+    }
 })();
