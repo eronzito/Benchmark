@@ -36,7 +36,7 @@ if (musicContainer) {
     });
 }
 
-// Teste de Reação
+// Teste de Reação 
 let reactionTimeout;
 let reactionStart;
 let waitingForSignal = false;
@@ -46,12 +46,13 @@ const reactionResult = document.getElementById('reaction-result');
 
 function startReactionWait() {
     if (!reactionBtn) return;
+    if (reactionResult) reactionResult.style.display = 'none';
+
     waitingForSignal = true;
     earlyClickFlag = false;
     reactionBtn.classList.remove('ready');
     reactionBtn.disabled = false;
     reactionBtn.textContent = 'Espere...';
-    reactionResult.textContent = '';
 
     const waitTime = Math.random() * 5000 + 3000; // 3s a 8s
     reactionTimeout = setTimeout(() => {
@@ -68,13 +69,17 @@ function startReactionWait() {
 if (reactionBtn) {
     reactionBtn.textContent = 'Iniciar';
     reactionBtn.disabled = false;
+    if (reactionResult) reactionResult.style.display = 'none';
 
     reactionBtn.addEventListener('click', function () {
         if (reactionBtn.classList.contains('ready')) {
             const reactionEnd = performance.now();
             let reactionTime = Math.round(reactionEnd - reactionStart);
             reactionTime = Math.max(0, reactionTime - 100);
-            reactionResult.textContent = `Seu tempo de reação: ${reactionTime} ms`;
+            if (reactionResult) {
+                reactionResult.textContent = `Seu tempo de reação: ${reactionTime} ms`;
+                reactionResult.style.display = 'block';
+            }
             reactionBtn.classList.remove('ready');
             reactionBtn.textContent = 'Iniciar';
             if (reactionTimeout) { clearTimeout(reactionTimeout); reactionTimeout = null; }
@@ -87,7 +92,10 @@ if (reactionBtn) {
         if (waitingForSignal) {
             if (!earlyClickFlag) {
                 earlyClickFlag = true;
-                reactionResult.textContent = 'Muito cedo!';
+                if (reactionResult) {
+                    reactionResult.textContent = 'Muito cedo!';
+                    reactionResult.style.display = 'block';
+                }
                 reactionBtn.textContent = 'Muito cedo!';
                 return;
             }
@@ -99,7 +107,10 @@ if (reactionBtn) {
                 }
                 waitingForSignal = false;
                 earlyClickFlag = false;
-                reactionResult.textContent = 'Reiniciando o teste...';
+                if (reactionResult) {
+                    reactionResult.textContent = 'Reiniciando o teste...';
+                    reactionResult.style.display = 'block';
+                }
                 reactionBtn.textContent = 'Iniciar';
                 reactionBtn.classList.remove('ready');
                 reactionBtn.disabled = false;

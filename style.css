@@ -4,14 +4,21 @@
     --panel-contrast: #fffafa;
     --panel-surface: rgba(255,255,255,0.12);
     --button-shadow: rgba(0,0,0,0.12);
+
+    
+    --result-bg: rgba(255,255,255,0.9);
+    --result-text: #000000;
 }
 
 .light-theme {
     --bg: #ffffff;
     --panel: #6b2bdc;
     --panel-contrast: #111111;
-    --panel-surface: rgba(71,34,173,0.06);
-    --button-shadow: rgba(0,0,0,0.06);
+    --panel-surface: rgba(138, 135, 146, 0.938);
+    --button-shadow: rgba(0, 0, 0, 0.06);
+
+    --result-bg: rgba(0,0,0,0.06);
+    --result-text: #111111;
 }
 
 /* Layout base */
@@ -19,7 +26,7 @@ html, body {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
-    background: var(--bg);
+    background: var(--bg); 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     display: flex;
@@ -56,17 +63,18 @@ body > .button-area {
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;  
+    align-items: center;
     padding: 24px 16px 48px;
     box-sizing: border-box;
-    min-height: calc(100vh - 160px); 
+    min-height: calc(100vh - 160px);
+    background: transparent;
 }
 
 
 .button-grid {
     width: 100%;
     max-width: 1100px;
-    background: var(--panel-surface);
+    background: var(--panel-surface); 
     padding: 18px;
     border-radius: 12px;
     box-shadow: 0 6px 0 rgba(0,0,0,0.12) inset;
@@ -74,9 +82,8 @@ body > .button-area {
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
     box-sizing: border-box;
-  
     grid-auto-rows: auto;
-    max-height: none; 
+    max-height: none;
     margin: 0 auto;
 }
 
