@@ -231,7 +231,7 @@ html, body {
     justify-content: center;
     min-height: 80vh;
     font-family: Arial, sans-serif;
-    color: #fffafa;
+    color: #000000;
 }
 
 .clicks-container {
@@ -293,14 +293,14 @@ html, body {
 
 .time-remaining {
     font-size: 18px;
-    color: #fffafa;
+    color: #000000;
     min-height: 22px;
     text-align: center;
 }
 
 .click-result {
     font-size: 32px;
-    color: #000; /* resultado em preto conforme solicitado */
+    color: #000; 
     min-height: 40px;
     text-align: center;
     background: rgba(255,255,255,0.9);
@@ -314,7 +314,7 @@ html, body {
     align-items: center;
     justify-content: center;
     min-height: 80vh;
-    color: #fffafa;
+    color: #000000;
 }
 
 .memory-container {
@@ -327,7 +327,7 @@ html, body {
 
 .memory-info {
     font-size: 20px;
-    color: #fffafa;
+    color: #000000;
 }
 
 .memory-display {
@@ -335,7 +335,7 @@ html, body {
     height: 160px;
     border-radius: 12px;
     background: #4722ad;
-    color: #fffafa;
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -380,7 +380,7 @@ html, body {
     font-size: 24px;
     min-height: 36px;
     text-align: center;
-    color: #000; /* resultado em preto */
+    color: #000; 
     background: rgba(255,255,255,0.9);
     padding: 8px 14px;
     border-radius: 8px;
