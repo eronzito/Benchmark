@@ -614,3 +614,77 @@ if (reactionBtn) {
     try { init(); } catch (e) {  }
     document.addEventListener('DOMContentLoaded', init);
 })();
+
+// config videos
+(function () {
+    const helpPanel = document.getElementById('help-panel');
+    if (!helpPanel) return;
+
+    let modal = document.getElementById('video-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'video-modal';
+        modal.className = 'video-modal';
+        modal.innerHTML = `
+            <div class="video-modal-inner" role="dialog" aria-modal="true">
+                <video id="video-modal-player" controls playsinline></video>
+                <div class="video-modal-controls">
+                    <button id="video-fullbtn" title="Expandir">⤢</button>
+                    <button id="video-close" title="Fechar">✕</button>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+    }
+
+    const player = document.getElementById('video-modal-player');
+    const closeBtn = document.getElementById('video-close');
+    const fullBtn = document.getElementById('video-fullbtn');
+
+    function openModal(src) {
+        if (!player) return;
+        player.src = src;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        player.play().catch(()=>{});
+    }
+    function closeModal() {
+        if (!player) return;
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        modal.classList.remove('open');
+        modal.classList.remove('fullscreen');
+        document.body.style.overflow = '';
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(()=>{});
+        }
+    }
+
+    helpPanel.querySelectorAll('.help-video').forEach(el => {
+        el.addEventListener('click', () => {
+            const src = el.getAttribute('data-src');
+            if (!src) return;
+            openModal(src);
+        });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+    if (fullBtn) {
+        fullBtn.addEventListener('click', async () => {
+            if (!modal.classList.contains('fullscreen')) {
+                modal.classList.add('fullscreen');
+                try {
+                    if (player.requestFullscreen) await player.requestFullscreen();
+                } catch (err) {  }
+            } else {
+                modal.classList.remove('fullscreen');
+                try {
+                    if (document.fullscreenElement) await document.exitFullscreen();
+                } catch (err) {  }
+            }
+        });
+    }
+})();
