@@ -517,45 +517,100 @@ if (reactionBtn) {
     renderLines();
 })();
 
+
 (function () {
-    const rootEl = document.documentElement;
+    const init = () => {
+        const saibaBtn = document.getElementById('saiba-btn');
+        const helpPanel = document.getElementById('help-panel');
+        if (!saibaBtn || !helpPanel) return;
 
+        const helpInner = helpPanel.querySelector('.help-inner');
+        const helpHeader = helpPanel.querySelector('.help-header');
+        let helpClose = helpPanel.querySelector('#help-close') || helpPanel.querySelector('.help-close');
 
-    function ensureThemeButton() {
-        if (document.getElementById('theme-btn')) return document.getElementById('theme-btn');
+        if (!helpClose && helpHeader) {
+            helpClose = document.createElement('button');
+            helpClose.id = 'help-close';
+            helpClose.className = 'help-close';
+            helpClose.type = 'button';
+            helpClose.setAttribute('aria-label', 'Fechar');
+            helpClose.textContent = '✕';
+            helpHeader.appendChild(helpClose);
+        }
 
-        const header = document.querySelector('header');
-        if (!header) return null;
+        let localThemeBtn = helpHeader ? helpHeader.querySelector('#help-theme-btn') : null;
+        if (!localThemeBtn && helpHeader) {
+            localThemeBtn = document.createElement('button');
+            localThemeBtn.id = 'help-theme-btn';
+            localThemeBtn.className = 'help-theme-btn';
+            localThemeBtn.type = 'button';
+            localThemeBtn.setAttribute('aria-label', 'Alternar tema do painel');
+            localThemeBtn.textContent = helpInner && helpInner.classList.contains('help-light') ? '☀️' : '🌙';
+            helpHeader.appendChild(localThemeBtn);
+        }
 
-        const btn = document.createElement('button');
-        btn.id = 'theme-btn';
-        btn.className = 'header-theme-btn';
-        btn.setAttribute('aria-label', 'Alternar tema');
-        btn.type = 'button';
-        btn.textContent = '🌙';
-        const musicBtn = document.getElementById('music-btn');
-        if (musicBtn && musicBtn.parentNode === header) header.insertBefore(btn, musicBtn);
-        else header.appendChild(btn);
+        const openHelp = () => {
+            helpPanel.classList.add('open');
+            saibaBtn.setAttribute('aria-expanded', 'true');
+            helpPanel.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        };
+        const closeHelp = () => {
+            helpPanel.classList.remove('open');
+            saibaBtn.setAttribute('aria-expanded', 'false');
+            helpPanel.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        };
+        const toggleHelp = () => (helpPanel.classList.contains('open') ? closeHelp() : openHelp());
 
-        return btn;
-    }
+        if (!saibaBtn.dataset.hooked) {
+            saibaBtn.addEventListener('click', toggleHelp);
+            saibaBtn.dataset.hooked = '1';
+        }
 
-    const themeBtn = ensureThemeButton();
+        if (helpClose && !helpClose.dataset.hooked) {
+            helpClose.addEventListener('click', closeHelp);
+            helpClose.dataset.hooked = '1';
+        }
 
-    const saved = localStorage.getItem('site-theme'); 
-    if (saved === 'light') rootEl.classList.add('light-theme');
+        if (!helpPanel.dataset.outHooked) {
+            helpPanel.addEventListener('click', (e) => {
+                if (e.target === helpPanel) closeHelp();
+            });
+            helpPanel.dataset.outHooked = '1';
+        }
 
-    function updateThemeIcon(btn) {
-        const isLight = rootEl.classList.contains('light-theme');
-        if (btn) btn.textContent = isLight ? '☀️' : '🌙';
-    }
-    updateThemeIcon(themeBtn);
+        if (!helpPanel.dataset.escHooked) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && helpPanel.classList.contains('open')) closeHelp();
+            });
+            helpPanel.dataset.escHooked = '1';
+        }
 
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            const isLight = rootEl.classList.toggle('light-theme');
-            localStorage.setItem('site-theme', isLight ? 'light' : 'dark');
-            updateThemeIcon(themeBtn);
-        });
-    }
+        const bindToggles = () => {
+            const toggles = helpPanel.querySelectorAll('.help-toggle');
+            toggles.forEach(btn => {
+                if (btn.dataset.hooked) return;
+                btn.addEventListener('click', () => {
+                    const item = btn.closest('.help-item');
+                    if (!item) return;
+                    const opened = item.classList.toggle('open');
+                    btn.setAttribute('aria-expanded', String(opened));
+                });
+                btn.dataset.hooked = '1';
+            });
+        };
+        bindToggles();
+
+        if (localThemeBtn && helpInner && !localThemeBtn.dataset.hooked) {
+            localThemeBtn.addEventListener('click', () => {
+                const opened = helpInner.classList.toggle('help-light');
+                localThemeBtn.textContent = opened ? '☀️' : '🌙';
+            });
+            localThemeBtn.dataset.hooked = '1';
+        }
+    };
+
+    try { init(); } catch (e) {  }
+    document.addEventListener('DOMContentLoaded', init);
 })();
